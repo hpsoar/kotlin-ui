@@ -22,7 +22,7 @@ class CYRecyclerAdapter(items: ArrayList<CYItemModel>?) : RecyclerView.Adapter<R
     private var mItems = ArrayList<CYItemModel>()
 
     // Model -> viewType
-    private val mViewTypeMap = HashMap<Any, Int>()
+    private val mViewTypeMap = HashMap<Class<CYItemModel>, Int>()
 
     // viewType -> ViewHolderCreator
     private val mHolderMap = HashMap<Int, CYViewHolderCreator>()
@@ -49,9 +49,14 @@ class CYRecyclerAdapter(items: ArrayList<CYItemModel>?) : RecyclerView.Adapter<R
         mItems.removeAt(position)
     }
 
-    fun mapModelViewHolder(modelClass: Any, creator: CYViewHolderCreator) {
+    fun registerModelViewHolder(key: Class<CYItemModel>, creator: CYViewHolderCreator) {
+        mViewTypeMap[key] = creator.viewType
+
+        addViewHolderCreator(creator)
+    }
+
+    private fun addViewHolderCreator(creator: CYViewHolderCreator) {
         mHolderMap[creator.viewType] = creator
-        mViewTypeMap[modelClass] = creator.viewType
     }
 
     override fun getItemCount() : Int {
@@ -73,22 +78,20 @@ class CYRecyclerAdapter(items: ArrayList<CYItemModel>?) : RecyclerView.Adapter<R
     override fun getItemViewType(position: Int): Int {
         val item = mItems[position]
 
-        val cls = item::class
+        // if item has creator, use this creator
+        val creator = item.getViewHolderCreator()
 
-        val viewType = mViewTypeMap[cls]
+        if (creator != null) {
+            // add this creator to adapter
+            addViewHolderCreator(creator)
 
-        if (viewType == null) {
-            val creator = item.getViewHolderCreator()
-
-            if (creator != null) {
-                mapModelViewHolder(cls, creator)
-                return creator.viewType
-            }
-        } else {
-            return viewType
+            return creator.viewType
         }
 
-        return -1
+        // otherwise, we use a registeredCreator
+        val viewType = mViewTypeMap[item.javaClass]
+
+        return viewType ?: -1
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
