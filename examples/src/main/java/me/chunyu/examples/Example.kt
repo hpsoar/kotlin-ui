@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.View
 import kotlinx.android.synthetic.main.example_item_row.view.*
 import me.chunyu.examples.R
+import me.chunyu.ui.recyclerview.CYAbsItemViewHolder
 import me.chunyu.ui.recyclerview.CYItemModel
 import me.chunyu.ui.recyclerview.CYItemViewHolder
 import me.chunyu.ui.recyclerview.CYViewHolderCreator
@@ -14,7 +15,11 @@ import me.chunyu.ui.recyclerview.CYViewHolderCreator
 /**
  * Created by huangpeng on 11/11/2017.
  */
-class Example(public val title: String, public val desc: String, private val activityClass: Class<*>) : CYItemModel {
+
+/*
+ * entry items
+ */
+class Example(val title: String, val desc: String, private val activityClass: Class<*>) : CYItemModel {
 
     override fun getViewHolderCreator(): CYViewHolderCreator? {
         return ExampleViewHolder.creator
@@ -32,7 +37,7 @@ class Example(public val title: String, public val desc: String, private val act
     }
 }
 
-class ExampleViewHolder(v: View) : RecyclerView.ViewHolder(v), me.chunyu.ui.recyclerview.CYItemViewHolder {
+class ExampleViewHolder(v: View) : CYAbsItemViewHolder(v) {
     private var item: Example? = null
 
     init {

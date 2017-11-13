@@ -5,17 +5,16 @@ import android.view.View
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.recycleview_photo_item.view.*
 import me.chunyu.examples.R
+import me.chunyu.ui.recyclerview.CYAbsItemViewHolder
 import me.chunyu.ui.recyclerview.CYItemViewHolder
 
 /**
  * Created by huangpeng on 11/11/2017.
  */
-class CYPhotoViewHolder(v: View) : RecyclerView.ViewHolder(v), me.chunyu.ui.recyclerview.CYItemViewHolder {
-    //2
+class CYPhotoViewHolder(v: View) : CYAbsItemViewHolder(v) {
     private var view: View = v
     private var photo: CYPhoto? = null
 
-    //3
     init {
 
     }

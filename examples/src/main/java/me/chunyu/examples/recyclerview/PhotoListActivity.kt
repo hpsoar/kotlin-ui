@@ -1,7 +1,6 @@
 package me.chunyu.examples.recyclerview
 
 import android.os.Bundle
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_photo_list.*
 import me.chunyu.examples.R
 import me.chunyu.examples.common.GridListActivity

@@ -5,6 +5,7 @@ import android.view.View
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.recyclerview_simple_photo_item.view.*
 import me.chunyu.examples.R
+import me.chunyu.ui.recyclerview.CYAbsItemViewHolder
 import me.chunyu.ui.recyclerview.CYItemModel
 import me.chunyu.ui.recyclerview.CYItemViewHolder
 import me.chunyu.ui.recyclerview.CYViewHolderCreator
@@ -26,7 +27,7 @@ class CYSimplePhotoItem(photo: CYPhoto) : CYItemModel {
     }
 }
 
-class CYSimplePhotoViewHolder(v: View) : RecyclerView.ViewHolder(v), me.chunyu.ui.recyclerview.CYItemViewHolder {
+class CYSimplePhotoViewHolder(v: View) : CYAbsItemViewHolder(v) {
     override fun shouldUpdate(item: Any): Boolean {
         if (item !is CYSimplePhotoItem) return false
 
