@@ -15,14 +15,15 @@ import kotlin.collections.set
 
 /*
     there are two ways to bind ViewHolder subclass with CYItemModel
-    1. call mapModelViewHolder manually for each (model, holder) pair
+    1. call registerModelViewHolder manually for each (model, holder) pair
     2. return a CYViewHolderCreator from CYItemModel::getViewHolderCreator()
+       1. one CYItemModel can return different creator at different state
  */
 class CYRecyclerAdapter(items: ArrayList<CYItemModel>?) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var mItems = ArrayList<CYItemModel>()
 
     // Model -> viewType
-    private val mViewTypeMap = HashMap<Class<CYItemModel>, Int>()
+    private val mViewTypeMap = HashMap<Class<*>, Int>()
 
     // viewType -> ViewHolderCreator
     private val mHolderMap = HashMap<Int, CYViewHolderCreator>()
@@ -32,6 +33,14 @@ class CYRecyclerAdapter(items: ArrayList<CYItemModel>?) : RecyclerView.Adapter<R
             addItems(items)
         }
     }
+
+    fun<T: CYItemModel> registerModelViewHolder(key: Class<T>, creator: CYViewHolderCreator) {
+        mViewTypeMap[key] = creator.viewType
+
+        addViewHolderCreator(creator)
+    }
+
+    // MARK - add & remove items
 
     fun addItems(items: ArrayList<CYItemModel>) {
         mItems.addAll(items)
@@ -49,15 +58,7 @@ class CYRecyclerAdapter(items: ArrayList<CYItemModel>?) : RecyclerView.Adapter<R
         mItems.removeAt(position)
     }
 
-    fun registerModelViewHolder(key: Class<CYItemModel>, creator: CYViewHolderCreator) {
-        mViewTypeMap[key] = creator.viewType
-
-        addViewHolderCreator(creator)
-    }
-
-    private fun addViewHolderCreator(creator: CYViewHolderCreator) {
-        mHolderMap[creator.viewType] = creator
-    }
+    // MARK - overrides: holder create & bind
 
     override fun getItemCount() : Int {
         return mItems.count()
@@ -102,6 +103,12 @@ class CYRecyclerAdapter(items: ArrayList<CYItemModel>?) : RecyclerView.Adapter<R
 
         val inflatedView = parent.inflate(R.layout.dummy_recyclerview_item_row, false)
         return CYDummyViewHolder(inflatedView)
+    }
+
+    // MARK - private
+
+    private fun addViewHolderCreator(creator: CYViewHolderCreator) {
+        mHolderMap[creator.viewType] = creator
     }
 
     private fun nonViewHolderMapMsg(item: CYItemModel, position: Int) : String {
